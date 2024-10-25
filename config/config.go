@@ -7,6 +7,8 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"os"
+	"path/filepath"
 )
 
 var DB *gorm.DB
@@ -25,16 +27,23 @@ type Config struct {
 func LoadConfig() (Config, error) {
 	var config Config
 
-	// 设置默认配置文件
-	viper.SetConfigName("config_dev") // 开发配置文件名 (不需要扩展名)
-	viper.SetConfigType("yaml")       // 配置文件类型
-	viper.AddConfigPath(".")          // 在项目根目录下查找配置文件
+	// 获取项目的根目录
+	rootDir, err := os.Getwd()
+	if err != nil {
+		return config, fmt.Errorf("failed to get working directory: %v", err)
+	}
 
-	// 尝试读取开发配置文件
+	// 设置配置文件的路径（使用绝对路径）
+	configPath := filepath.Join(rootDir, "config")
+	viper.AddConfigPath(configPath)
+	viper.AddConfigPath(".") // 也可添加相对路径查找
+
+	viper.SetConfigName("config_dev")
+	viper.SetConfigType("yaml")
 	if err := viper.ReadInConfig(); err != nil {
 		log.Printf("config_dev.yml not found, falling back to config.yml")
 
-		// 尝试读取正式配置文件
+		// 尝试读取正式配置
 		viper.SetConfigName("config")
 		if err := viper.ReadInConfig(); err != nil {
 			return config, fmt.Errorf("error reading config file, %s", err)
