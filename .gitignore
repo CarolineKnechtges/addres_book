@@ -13,3 +13,6 @@ go.sum
 # 忽略 IDE 配置文件
 .vscode/
 .idea/
+
+#忽略本地配置文件
+config_dev.yml
