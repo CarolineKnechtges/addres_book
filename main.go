@@ -22,7 +22,7 @@ func main() {
 	router := routes.SetupRouter()
 
 	// 启动服务器
-	err = router.Run(":8080")
+	err = router.Run(":8888")
 	if err != nil {
 		panic(err)
 		return
